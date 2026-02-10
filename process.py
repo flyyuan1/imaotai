@@ -5,6 +5,7 @@ import random
 import re
 import time
 import config
+import os
 from encrypt import Encrypt
 import requests
 import hashlib
@@ -13,6 +14,11 @@ import pytz
 
 AES_KEY = 'qbhajinldepmucsonaaaccgypwuvcjaa'
 AES_IV = '2018534749963515'
+# credentials 路径，例如：CREDENTIALS_PATH = /home/user/.imoutai/credentials
+# 不配置，使用默认路径，在项目目录下
+########################
+CREDENTIALS_PATH = os.path.join(os.path.dirname(__file__), 'credentials')
+########################
 SALT = '2af72f100c356273d46284f6fd1dfc08'
 
 # AMAP_KEY = '9449339b6c4aee04d69481e6e6c84a84'
@@ -264,9 +270,13 @@ def reservation(params: dict, mobile: str):
 
 def select_geo(i: str):
     # https://www.piliang.tech/geocoding-amap
-    resp = requests.get(f"https://www.piliang.tech/api/amap/geocode?address={i}")
-    geocodes: list = resp.json()['geocodes']
-    return geocodes
+    try:
+        resp = requests.get(f"https://www.piliang.tech/api/amap/geocode?address={i}", verify=False, timeout=10)
+        geocodes: list = resp.json().get('geocodes', [])
+        return geocodes
+    except Exception as e:
+        print(f"地理编码查询失败: {e}")
+        return []
 
 
 def get_map(lat: str = '28.499562', lng: str = '102.182324'):

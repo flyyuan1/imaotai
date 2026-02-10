@@ -16,11 +16,11 @@ ITEM_CODES = ['10941', '10942']
 PUSH_TOKEN = None
 ########################
 
-# credentials 路径，例如：CREDENTIALS_PATH = /home/user/.imoutai/credentials
-# 不配置，使用默认路径，在宿主目录
-# 例如： CREDENTIALS_PATH = '/home/user/.imautai/credentials'
+import os
+# credentials 路径
+# 默认使用项目目录下的 credentials 文件
 ########################
-CREDENTIALS_PATH = None
+CREDENTIALS_PATH = os.path.join(os.path.dirname(__file__), 'credentials')
 ########################
 
 # 预约规则配置
