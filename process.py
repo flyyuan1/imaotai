@@ -19,9 +19,16 @@ SALT = '2af72f100c356273d46284f6fd1dfc08'
 
 current_time = str(int(time.time() * 1000))
 headers = {}
-mt_version = "".join(re.findall('latest__version">(.*?)</p>',
-                                requests.get('https://apps.apple.com/cn/app/i%E8%8C%85%E5%8F%B0/id1600482450').text,
-                                re.S)).split(" ")[1]
+
+# 备用版本号，当网络请求失败时使用（如 Docker 容器内 DNS 解析失败）
+FALLBACK_VERSION = '1.9.2'
+try:
+    mt_version = "".join(re.findall('latest__version">(.*?)</p>',
+                                    requests.get('https://apps.apple.com/cn/app/i%E8%8C%85%E5%8F%B0/id1600482450', timeout=10).text,
+                                    re.S)).split(" ")[1]
+except Exception as e:
+    logging.warning(f'获取App版本号失败，使用备用版本号 {FALLBACK_VERSION}，错误信息: {e}')
+    mt_version = FALLBACK_VERSION
 
 header_context = f'''
 MT-Lat: 28.499562
